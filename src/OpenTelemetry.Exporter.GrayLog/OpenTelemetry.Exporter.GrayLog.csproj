@@ -9,12 +9,14 @@
         <Authors>Tornike Tcholadze</Authors>
         <Description>Opentelemetry Graylog Exporter</Description>
         <PackageId>GrayLog.OpenTelemetry.Exporter</PackageId>
+        <PackageCopyright>Copyright © 2024 Tornike Tcholadze</PackageCopyright>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
 
     <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\"/>
         <PackageReference Include="OpenTelemetry" Version="1.9.0"/>
     </ItemGroup>
 
