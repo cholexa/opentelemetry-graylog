@@ -32,8 +32,8 @@ public static class GelfTracingExtensions
         if (activity.RootId != null) gelfPayload.Add("_rootId", activity.RootId);
         if (activity.ParentId != null) gelfPayload.Add("_parentId", activity.ParentId);
 
-        // Flatten tags
-        foreach (var tag in activity.Tags)
+        // Flatten tag objects
+        foreach (var tag in activity.TagObjects)
         {
             if (tag.Value != null) gelfPayload[$"_tag_{tag.Key}"] = tag.Value;
         }
