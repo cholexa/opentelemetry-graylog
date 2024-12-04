@@ -13,13 +13,6 @@ OpenTelemetry tracing exporter for GrayLog.
 - Lightweight and easy-to-use configuration
 - Compatible with .NET 8.0
 
-## Installation
-
-Install the package via NuGet:
-
-```bash
-dotnet add package GrayLog.OpenTelemetry.Exporter --version 1.9.0-beta.1
-```
 ### **3. Basic Usage Example**
 Provide a simple, self-contained example of how to use the library/tool. This should be concise but functional.
 

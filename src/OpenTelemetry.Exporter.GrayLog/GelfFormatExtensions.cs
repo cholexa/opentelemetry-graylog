@@ -1,12 +1,9 @@
 using System.Diagnostics;
-using Microsoft.Extensions.DependencyInjection;
-using OpenTelemetry.Exporter.GrayLog.Abstractions;
 using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
 
 namespace OpenTelemetry.Exporter.GrayLog;
 
-public static class GelfTracingExtensions
+public static class GelfFormatExtensions
 {
     public static Dictionary<string, object> ToGelfFlattened(this Activity activity, string host, Resource resource)
     {
@@ -17,12 +14,12 @@ public static class GelfTracingExtensions
                           {
                               { "version", "1.1" },
                               { "host", host },
-                              { "short_message", $"Activity {activity.DisplayName} completed" },
-                              { "timestamp", activity.StartTimeUtc },
+                              { "short_message", $"Activity: {activity.DisplayName}" },
+                              { "timestamp", activity.StartTimeUtc.ToUnixTimeSecondsWithOptionalDecimalMilliseconds() },
                               { "level", 6 },
                               { "_traceId", activity.TraceId.ToString() },
                               { "_spanId", activity.SpanId.ToString() },
-                              { "_displayName", activity.DisplayName },
+                              { "_activity", activity.DisplayName },
                               { "_hasRemoteParent", activity.HasRemoteParent.ToString() },
                               { "_durationMs", activity.Duration.TotalMilliseconds },
                               { "_status", activity.Status.ToString() },
@@ -72,7 +69,7 @@ public static class GelfTracingExtensions
         {
             var eventPrefix = $"_event_{eventIndex++}_";
             gelfPayload[$"{eventPrefix}name"] = activityEvent.Name;
-            gelfPayload[$"{eventPrefix}timestamp"] = activityEvent.Timestamp.ToUnixTimeSeconds();
+            gelfPayload[$"{eventPrefix}timestamp"] = activityEvent.Timestamp.ToUnixTimeSecondsWithOptionalDecimalMilliseconds();
 
             // Flatten event attributes
             foreach (var tag in activityEvent.Tags)
@@ -84,17 +81,19 @@ public static class GelfTracingExtensions
         return gelfPayload;
     }
 
-    public static TracerProviderBuilder AddGrayLogExporter(this TracerProviderBuilder builder)
-        => builder.AddGrayLogExporter(null);
-
-    public static TracerProviderBuilder AddGrayLogExporter(this TracerProviderBuilder builder, Action<GrayLogExporterOptions>? configure)
+    private static double ToUnixTimeSecondsWithOptionalDecimalMilliseconds(this DateTime dateTime, bool includeMilliseconds = true)
     {
-        var options = new GrayLogExporterOptions();
-        configure?.Invoke(options);
+        return ToUnixTimeSecondsWithOptionalDecimalMilliseconds(new DateTimeOffset(dateTime), includeMilliseconds);
+    }
 
-        builder.ConfigureServices(sc => sc.AddSingleton(GrayLogPublisherFactory.Create(options)));
-        builder.AddProcessor(sp => new GrayLogBatchActivityExportProcessor(new GelfFormatExporter(sp.GetRequiredService<IGrayLogPublisher>())));
+    private static double ToUnixTimeSecondsWithOptionalDecimalMilliseconds(this DateTimeOffset dateTime, bool includeMilliseconds = true)
+    {
+        double activityStartUnixSeconds = dateTime.ToUnixTimeSeconds();
+        if (includeMilliseconds)
+        {
+            activityStartUnixSeconds += dateTime.Millisecond / 1000.0f;
+        }
 
-        return builder;
+        return activityStartUnixSeconds;
     }
 }
