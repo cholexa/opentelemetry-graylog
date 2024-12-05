@@ -13,22 +13,32 @@ OpenTelemetry tracing exporter for GrayLog.
 - Lightweight and easy-to-use configuration
 - Compatible with .NET 8.0
 
-### **3. Basic Usage Example**
-Provide a simple, self-contained example of how to use the library/tool. This should be concise but functional.
-
 ### Basic Example
 
 Here’s how you can configure the GrayLog exporter to send telemetry data:
 
 ```csharp
-using OpenTelemetry.Trace;
-using OpenTelemetry.Exporter.GrayLog;
-
 var tracerProvider = Sdk.CreateTracerProviderBuilder()
-    .AddGrayLogExporter(options =>
-                       {
-                           options.Endpoint = new Uri("http://your-graylog-host:port");
-                           options.Protocol = GrayLogExportProtocol.Tcp;
-                       })
+    .AddSource("YourApplicationSource")
+    .AddGraylogExporter(options =>
+    {
+        options.Endpoint = new Uri("http://localhost:12201"); // Replace with your Graylog endpoint
+        options.Protocol = GrayLogExportProtocol.Tcp;
+    })
     .Build();
+
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddOpenTelemetry(options =>
+    {
+        options.AddGraylogExporter(exporterOptions =>
+        {
+            exporterOptions.Endpoint = new Uri("http://localhost:12201"); // Replace with your Graylog endpoint
+        options.Protocol = GrayLogExportProtocol.Tcp;
+        });
+    });
+});
+
+var logger = loggerFactory.CreateLogger<Program>();
+logger.LogInformation("This is a test log message.");
 ```

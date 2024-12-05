@@ -1,5 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
-using OpenTelemetry.Exporter.GrayLog.Abstractions;
 using OpenTelemetry.Trace;
 
 namespace OpenTelemetry.Exporter.GrayLog;
@@ -14,9 +12,7 @@ public static class GrayLogTraceExporterExtensions
         var options = new GrayLogExporterOptions();
         configure?.Invoke(options);
 
-        builder.ConfigureServices(sc => sc.AddSingleton(GrayLogPublisherFactory.Create(options)));
-        builder.AddProcessor(sp => new GrayLogBatchActivityExportProcessor(new GelfFormatExporter(sp.GetRequiredService<IGrayLogPublisher>())));
-
+        builder.AddProcessor(new GrayLogBatchActivityExportProcessor(new GraylogTraceExporter(GrayLogPublisherFactory.Create(options))));
         return builder;
     }
 }

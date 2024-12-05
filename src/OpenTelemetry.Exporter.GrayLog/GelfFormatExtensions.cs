@@ -1,10 +1,15 @@
 using System.Diagnostics;
+using Microsoft.Extensions.Logging;
+using OpenTelemetry.Logs;
 using OpenTelemetry.Resources;
 
 namespace OpenTelemetry.Exporter.GrayLog;
 
 public static class GelfFormatExtensions
 {
+    private const string EmptyTraceId = "00000000000000000000000000000000";
+    private const string EmptySpanId = "0000000000000000";
+
     public static Dictionary<string, object> ToGelfFlattened(this Activity activity, string host, Resource resource)
     {
         ArgumentNullException.ThrowIfNull(activity);
@@ -14,16 +19,16 @@ public static class GelfFormatExtensions
                           {
                               { "version", "1.1" },
                               { "host", host },
-                              { "short_message", $"Activity: {activity.DisplayName}" },
                               { "timestamp", activity.StartTimeUtc.ToUnixTimeSecondsWithOptionalDecimalMilliseconds() },
-                              { "level", 6 },
+                              { "short_message", $"Activity: {activity.DisplayName}" },
+                              { "level", LogLevel.Information },
                               { "_traceId", activity.TraceId.ToString() },
                               { "_spanId", activity.SpanId.ToString() },
                               { "_activity", activity.DisplayName },
+                              { "_activity_source", activity.Source.Name },
                               { "_hasRemoteParent", activity.HasRemoteParent.ToString() },
                               { "_durationMs", activity.Duration.TotalMilliseconds },
-                              { "_status", activity.Status.ToString() },
-                              { "_sourceName", activity.Source.Name }
+                              { "_status", activity.Status.ToString() }
                           };
 
         if (activity.RootId != null) gelfPayload.Add("_rootId", activity.RootId);
@@ -58,7 +63,7 @@ public static class GelfFormatExtensions
         }
 
         // Flatten resource attributes
-        foreach (var attribute in resource.Attributes)
+        foreach (var attribute in resource.Attributes.Where(x => !x.Key.Contains("telemetry")))
         {
             gelfPayload[$"_resource_{attribute.Key}"] = attribute.Value;
         }
@@ -76,6 +81,51 @@ public static class GelfFormatExtensions
             {
                 if (tag.Value != null) gelfPayload[$"{eventPrefix}attribute_{tag.Key}"] = tag.Value;
             }
+        }
+
+        return gelfPayload;
+    }
+
+    public static Dictionary<string, object> ToGelfFlattened(this LogRecord logRecord, string host, Resource resource)
+    {
+        ArgumentNullException.ThrowIfNull(logRecord);
+
+        // Flatten the fields into a single dictionary
+        var gelfPayload = new Dictionary<string, object>
+                          {
+                              { "version", "1.1" },
+                              { "host", host },
+                              { "timestamp", logRecord.Timestamp.ToUnixTimeSecondsWithOptionalDecimalMilliseconds() },
+                              { "short_message", logRecord.CategoryName ?? "N/A" },
+                              { "level", logRecord.LogLevel }
+                          };
+
+
+        if (!string.IsNullOrEmpty(logRecord.Body))
+        {
+            var body = logRecord.Body ?? string.Empty;
+            var index = 0;
+            foreach (var attribute in logRecord.Attributes ?? [])
+            {
+                body = body.Replace(attribute.Key, index.ToString());
+                index++;
+            }
+
+            gelfPayload["full_message"] = logRecord.FormattedMessage ?? string.Format(body, logRecord.Attributes?.Select(x => x.Value).ToArray() ?? []);
+        }
+
+        var traceId = logRecord.TraceId.ToString();
+        var spanId = logRecord.SpanId.ToString();
+
+        if (!string.IsNullOrEmpty(traceId) && traceId != EmptyTraceId)
+            gelfPayload["_traceId"] = traceId;
+        if (!string.IsNullOrEmpty(spanId) && spanId != EmptySpanId)
+            gelfPayload["_spanId"] = spanId;
+
+        // Flatten resource attributes
+        foreach (var attribute in resource.Attributes.Where(x => !x.Key.Contains("telemetry")))
+        {
+            gelfPayload[$"_resource_{attribute.Key}"] = attribute.Value;
         }
 
         return gelfPayload;

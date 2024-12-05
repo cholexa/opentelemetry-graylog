@@ -3,7 +3,7 @@ using System.Diagnostics;
 namespace OpenTelemetry.Exporter.GrayLog;
 
 public class GrayLogBatchActivityExportProcessor(
-    GelfFormatExporter formatExporter,
+    GraylogTraceExporter formatExporter,
     int maxQueueSize = 2048,
     int scheduledDelayMilliseconds = 5000,
     int exporterTimeoutMilliseconds = 30000,
