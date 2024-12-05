@@ -13,6 +13,7 @@
         <PackageCopyright>Copyright © 2024 Tornike Tcholadze</PackageCopyright>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryUrl>https://github.com/cholexa/opentelemetry-graylog</RepositoryUrl>
     </PropertyGroup>
 
 

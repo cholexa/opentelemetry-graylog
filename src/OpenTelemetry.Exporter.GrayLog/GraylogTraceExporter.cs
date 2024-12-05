@@ -5,7 +5,7 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace OpenTelemetry.Exporter.GrayLog;
 
-public class GelfFormatExporter(IGrayLogPublisher grayLogPublisher) : BaseExporter<Activity>
+public class GraylogTraceExporter(IGrayLogPublisher grayLogPublisher) : BaseExporter<Activity>
 {
     private Resource? _processResource;
     private Resource ProcessResource => _processResource ??= ParentProvider.GetResource();
