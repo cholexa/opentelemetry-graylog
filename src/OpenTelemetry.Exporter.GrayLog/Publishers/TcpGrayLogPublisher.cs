@@ -2,7 +2,7 @@ using System.Net.Sockets;
 using System.Text;
 using OpenTelemetry.Exporter.GrayLog.Abstractions;
 
-namespace OpenTelemetry.Exporter.GrayLog;
+namespace OpenTelemetry.Exporter.GrayLog.Publishers;
 
 public class TcpGrayLogPublisher : IGrayLogPublisher
 {

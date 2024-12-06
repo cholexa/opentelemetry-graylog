@@ -1,3 +1,5 @@
+using OpenTelemetry.Exporter.GrayLog.Publishers;
+
 namespace OpenTelemetry.Exporter.GrayLog;
 
 public record GrayLogExporterOptions
@@ -8,19 +10,17 @@ public record GrayLogExporterOptions
                                                                                     { GrayLogExportProtocol.Tcp, new Uri("http://localhost:12201") }
                                                                                 };
 
-    private Uri? _endpoint = null;
+    private Uri? _endpoint;
 
     public Uri Endpoint
     {
         get => _endpoint == null ? _defaultEndpoints[Protocol] : _endpoint;
-
         set
         {
             ArgumentNullException.ThrowIfNull(value);
             _endpoint = value;
         }
     }
-
 
     private GrayLogExportProtocol? _protocol;
 

@@ -1,6 +1,6 @@
 using OpenTelemetry.Logs;
 
-namespace OpenTelemetry.Exporter.GrayLog;
+namespace OpenTelemetry.Exporter.GrayLog.Logging;
 
 public static class GrayLogLogExporterExtensions
 {
@@ -12,7 +12,7 @@ public static class GrayLogLogExporterExtensions
         var options = new GrayLogExporterOptions();
         configure?.Invoke(options);
 
-        otLoggerOptions.AddProcessor(sp => new BatchLogRecordExportProcessor(new GrayLogLogExporter(GrayLogPublisherFactory.Create(options))));
+        otLoggerOptions.AddProcessor(new BatchLogRecordExportProcessor(new GrayLogLogExporter(GrayLogPublisherFactory.Create(options))));
         return otLoggerOptions;
     }
 }

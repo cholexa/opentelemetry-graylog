@@ -3,7 +3,7 @@ using OpenTelemetry.Exporter.GrayLog.Abstractions;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Resources;
 
-namespace OpenTelemetry.Exporter.GrayLog;
+namespace OpenTelemetry.Exporter.GrayLog.Logging;
 
 public class GrayLogLogExporter(IGrayLogPublisher grayLogPublisher) : BaseExporter<LogRecord>
 {

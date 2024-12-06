@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace OpenTelemetry.Exporter.GrayLog;
+namespace OpenTelemetry.Exporter.GrayLog.Tracing;
 
 public class GrayLogBatchActivityExportProcessor(
     GraylogTraceExporter formatExporter,
