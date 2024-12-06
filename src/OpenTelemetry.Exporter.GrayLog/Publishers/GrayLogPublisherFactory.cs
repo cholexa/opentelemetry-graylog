@@ -1,4 +1,5 @@
 using OpenTelemetry.Exporter.GrayLog.Abstractions;
+using OpenTelemetry.Exporter.GrayLog.Publishers;
 
 namespace OpenTelemetry.Exporter.GrayLog;
 

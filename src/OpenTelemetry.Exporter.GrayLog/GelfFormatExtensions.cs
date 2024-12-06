@@ -100,19 +100,19 @@ public static class GelfFormatExtensions
                               { "level", logRecord.LogLevel }
                           };
 
-
-        if (!string.IsNullOrEmpty(logRecord.Body))
+        var formattedMessage = logRecord.FormattedMessage;
+        if (string.IsNullOrEmpty(formattedMessage))
         {
-            var body = logRecord.Body ?? string.Empty;
-            var index = 0;
-            foreach (var attribute in logRecord.Attributes ?? [])
-            {
-                body = body.Replace(attribute.Key, index.ToString());
-                index++;
-            }
+            formattedMessage = logRecord.Body;
 
-            gelfPayload["full_message"] = logRecord.FormattedMessage ?? string.Format(body, logRecord.Attributes?.Select(x => x.Value).ToArray() ?? []);
+            if (logRecord.Attributes != null && logRecord.Attributes.Any())
+            {
+                var attributes = string.Join(", ", logRecord.Attributes.Where(x => x.Value?.ToString() != formattedMessage).Select(kvp => $"{kvp.Key}: {kvp.Value}"));
+                formattedMessage = $"{formattedMessage ?? "N/A"} | Attributes: {attributes}";
+            }
         }
+
+        gelfPayload["full_message"] = formattedMessage ?? "N/A";
 
         var traceId = logRecord.TraceId.ToString();
         var spanId = logRecord.SpanId.ToString();

@@ -1,6 +1,6 @@
 using OpenTelemetry.Trace;
 
-namespace OpenTelemetry.Exporter.GrayLog;
+namespace OpenTelemetry.Exporter.GrayLog.Tracing;
 
 public static class GrayLogTraceExporterExtensions
 {

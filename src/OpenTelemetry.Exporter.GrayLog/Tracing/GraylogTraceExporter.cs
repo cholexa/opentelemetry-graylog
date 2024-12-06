@@ -3,7 +3,7 @@ using OpenTelemetry.Exporter.GrayLog.Abstractions;
 using OpenTelemetry.Resources;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
-namespace OpenTelemetry.Exporter.GrayLog;
+namespace OpenTelemetry.Exporter.GrayLog.Tracing;
 
 public class GraylogTraceExporter(IGrayLogPublisher grayLogPublisher) : BaseExporter<Activity>
 {
