@@ -44,7 +44,7 @@ public class UdpGrayLogPublisher : IGrayLogPublisher
                 return false;
 
             var messageBytes = Encoding.UTF8.GetBytes(message);
-            if (messageBytes.Length >= 1048576)
+            if (messageBytes.Length >= 262144)
             {
                 Console.Error.WriteLine("Warning while publishing: Message size exceeds the allowed limit!");
             }
