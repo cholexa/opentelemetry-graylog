@@ -22,7 +22,7 @@ var tracerProvider = Sdk.CreateTracerProviderBuilder()
     .AddSource("YourApplicationSource")
     .AddGraylogExporter(options =>
     {
-        options.Endpoint = new Uri("http://localhost:12201"); // Replace with your Graylog endpoint
+        options.Endpoint = [new Uri("http://localhost:12201")]; // Replace with your Graylog endpoint
         options.Protocol = GrayLogExportProtocol.Tcp;
     })
     .Build();
@@ -33,7 +33,7 @@ var loggerFactory = LoggerFactory.Create(builder =>
     {
         options.AddGraylogExporter(exporterOptions =>
         {
-            exporterOptions.Endpoint = new Uri("http://localhost:12201"); // Replace with your Graylog endpoint
+            exporterOptions.Endpoint = [new Uri("http://localhost:12201")]; // Replace with your Graylog endpoint
         options.Protocol = GrayLogExportProtocol.Tcp;
         });
     });

@@ -12,15 +12,15 @@ public record GrayLogExporterOptions
                                                                                     { GrayLogExportProtocol.Tcp, new Uri("http://localhost:12201") }
                                                                                 };
 
-    private Uri? _endpoint;
+    private Uri[]? _endpoints;
 
-    public Uri Endpoint
+    public Uri[] Endpoints
     {
-        get => _endpoint == null ? _defaultEndpoints[Protocol] : _endpoint;
+        get => _endpoints ?? [_defaultEndpoints[Protocol]];
         set
         {
             ArgumentNullException.ThrowIfNull(value);
-            _endpoint = value;
+            _endpoints = value;
         }
     }
 
