@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using OpenTelemetry.Exporter.GrayLog.Publishers;
+using OpenTelemetry.Trace;
 
 namespace OpenTelemetry.Exporter.GrayLog;
 
@@ -10,23 +12,21 @@ public record GrayLogExporterOptions
                                                                                     { GrayLogExportProtocol.Tcp, new Uri("http://localhost:12201") }
                                                                                 };
 
-    private Uri? _endpoint;
+    private Uri[]? _endpoints;
 
-    public Uri Endpoint
+    public Uri[] Endpoints
     {
-        get => _endpoint == null ? _defaultEndpoints[Protocol] : _endpoint;
+        get => _endpoints ?? [_defaultEndpoints[Protocol]];
         set
         {
             ArgumentNullException.ThrowIfNull(value);
-            _endpoint = value;
+            _endpoints = value;
         }
     }
 
-    private GrayLogExportProtocol? _protocol;
+    public GrayLogExportProtocol Protocol { get; set; } = GrayLogExportProtocol.Udp;
 
-    public GrayLogExportProtocol Protocol
-    {
-        get => _protocol ?? GrayLogExportProtocol.Udp;
-        set => _protocol = value;
-    }
+    public string Host { get; set; } = Environment.MachineName;
+
+    public BatchExportProcessorOptions<Activity> BatchExportProcessorOptions { get; set; } = new BatchExportActivityProcessorOptions();
 }
