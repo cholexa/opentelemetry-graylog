@@ -12,7 +12,6 @@ public static class GrayLogTraceExporterExtensions
     {
         var options = new GrayLogExporterOptions();
         configure?.Invoke(options);
-        options.BatchExportProcessorOptions ??= new BatchExportActivityProcessorOptions();
 
         builder.AddProcessor(new GrayLogBatchActivityExportProcessor(new GraylogTraceExporter(GrayLogPublisherFactory.Create(options), options.Host),
                                                                      options.BatchExportProcessorOptions.MaxQueueSize,

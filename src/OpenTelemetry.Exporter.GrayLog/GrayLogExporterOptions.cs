@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using OpenTelemetry.Exporter.GrayLog.Publishers;
+using OpenTelemetry.Trace;
 
 namespace OpenTelemetry.Exporter.GrayLog;
 
@@ -27,5 +28,5 @@ public record GrayLogExporterOptions
 
     public string Host { get; set; } = Environment.MachineName;
 
-    public BatchExportProcessorOptions<Activity>? BatchExportProcessorOptions { get; set; }
+    public BatchExportProcessorOptions<Activity> BatchExportProcessorOptions { get; set; } = new BatchExportActivityProcessorOptions();
 }

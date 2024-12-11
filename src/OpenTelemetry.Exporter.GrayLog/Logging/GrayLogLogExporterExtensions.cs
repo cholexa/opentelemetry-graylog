@@ -13,7 +13,6 @@ public static class GrayLogLogExporterExtensions
     {
         var options = new GrayLogExporterOptions();
         configure?.Invoke(options);
-        options.BatchExportProcessorOptions ??= new BatchExportActivityProcessorOptions();
 
         otLoggerOptions.AddProcessor(new BatchLogRecordExportProcessor(new GrayLogLogExporter(GrayLogPublisherFactory.Create(options), options.Host),
                                                                        options.BatchExportProcessorOptions.MaxQueueSize,
