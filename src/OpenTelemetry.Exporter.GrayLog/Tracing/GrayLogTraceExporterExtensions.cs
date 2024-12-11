@@ -12,8 +12,13 @@ public static class GrayLogTraceExporterExtensions
     {
         var options = new GrayLogExporterOptions();
         configure?.Invoke(options);
+        options.BatchExportProcessorOptions ??= new BatchExportActivityProcessorOptions();
 
-        builder.AddProcessor(new GrayLogBatchActivityExportProcessor(new GraylogTraceExporter(GrayLogPublisherFactory.Create(options))));
+        builder.AddProcessor(new GrayLogBatchActivityExportProcessor(new GraylogTraceExporter(GrayLogPublisherFactory.Create(options), options.Host),
+                                                                     options.BatchExportProcessorOptions.MaxQueueSize,
+                                                                     options.BatchExportProcessorOptions.ScheduledDelayMilliseconds,
+                                                                     options.BatchExportProcessorOptions.ExporterTimeoutMilliseconds,
+                                                                     options.BatchExportProcessorOptions.MaxExportBatchSize));
         return builder;
     }
 }

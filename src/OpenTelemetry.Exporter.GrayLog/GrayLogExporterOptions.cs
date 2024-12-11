@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using OpenTelemetry.Exporter.GrayLog.Publishers;
 
 namespace OpenTelemetry.Exporter.GrayLog;
@@ -22,11 +23,9 @@ public record GrayLogExporterOptions
         }
     }
 
-    private GrayLogExportProtocol? _protocol;
+    public GrayLogExportProtocol Protocol { get; set; } = GrayLogExportProtocol.Udp;
 
-    public GrayLogExportProtocol Protocol
-    {
-        get => _protocol ?? GrayLogExportProtocol.Udp;
-        set => _protocol = value;
-    }
+    public string Host { get; set; } = Environment.MachineName;
+
+    public BatchExportProcessorOptions<Activity>? BatchExportProcessorOptions { get; set; }
 }
