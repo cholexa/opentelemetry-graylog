@@ -19,7 +19,6 @@ public class TcpGrayLogPublisher : IGrayLogPublisher
         _port = port;
         _tcpClient = new TcpClient();
         _tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-        EnsureConnected();
     }
 
     public bool Connected

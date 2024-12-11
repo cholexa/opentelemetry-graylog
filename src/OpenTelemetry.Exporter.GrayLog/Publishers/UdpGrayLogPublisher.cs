@@ -4,21 +4,11 @@ using OpenTelemetry.Exporter.GrayLog.Abstractions;
 
 namespace OpenTelemetry.Exporter.GrayLog.Publishers;
 
-public class UdpGrayLogPublisher : IGrayLogPublisher
+public class UdpGrayLogPublisher(string host, int port) : IGrayLogPublisher
 {
     private const int RetryCount = 5;
 
-    private readonly string _host;
-    private readonly int _port;
-    private UdpClient _udpClient;
-
-    public UdpGrayLogPublisher(string host, int port)
-    {
-        _host = host;
-        _port = port;
-        _udpClient = new UdpClient();
-        EnsureConnected();
-    }
+    private UdpClient _udpClient = new();
 
     public bool Connected
     {
@@ -75,7 +65,7 @@ public class UdpGrayLogPublisher : IGrayLogPublisher
             try
             {
                 _udpClient = new UdpClient();
-                _udpClient.Connect(_host, _port);
+                _udpClient.Connect(host, port);
                 Console.WriteLine("Reconnected successfully.");
                 return true;
             }
