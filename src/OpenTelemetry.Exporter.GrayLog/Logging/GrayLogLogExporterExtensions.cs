@@ -1,3 +1,4 @@
+using OpenTelemetry.Exporter.GrayLog.Publishers;
 using OpenTelemetry.Logs;
 
 namespace OpenTelemetry.Exporter.GrayLog.Logging;

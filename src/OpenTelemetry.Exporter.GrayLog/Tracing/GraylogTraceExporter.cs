@@ -12,11 +12,6 @@ public class GraylogTraceExporter(IGrayLogPublisher grayLogPublisher) : BaseExpo
 
     public override ExportResult Export(in Batch<Activity> batch)
     {
-        if (!grayLogPublisher.Connected)
-        {
-            return ExportResult.Failure;
-        }
-
         foreach (var activity in batch)
         {
             var gelfJsons = JsonSerializer.Serialize(activity.ToGelfFlattened(Environment.MachineName, ProcessResource));
